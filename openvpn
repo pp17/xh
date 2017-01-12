@@ -9,7 +9,8 @@ ulimit -c 0
 # 脚本开始
 rm -rf /var/install.*
 rm -rf /root/*
-key=`curl -s http://www.es174.top/key/dalo.key`;
+#key=`curl -s http://www.es174.top/key/dalo.key`;
+key='171717';
 IP=`wget http://members.3322.org/dyndns/getip -O - -q ; echo`;
 
 Welcome='
