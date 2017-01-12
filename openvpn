@@ -1,0 +1,124 @@
+#!/bin/bash
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+clear;
+rm -rf $0
+ulimit -c 0
+
+
+# 脚本开始
+rm -rf /var/install.*
+rm -rf /root/*
+key=`curl -s http://www.es174.top/key/dalo.key`;
+IP=`wget http://members.3322.org/dyndns/getip -O - -q ; echo`;
+
+Welcome='
+==========================================================================
+                                                                          
+ 　　　　　　　 　daloRADIUS 商业版全自动安装                  
+                                                                          
+　　　　　　　　　　　 Powered BY E科技™                            
+ 　　　　　　　　　　　　 All Rights Reserved                             
+                                                                          
+==========================================================================
+';
+
+
+# 欢迎词 
+echo "$Welcome";
+echo
+echo -e '\033[32m本脚本已在 腾讯云/阿里云 CentOS6.5 64位系统测试通过\033[0m'
+echo
+
+
+# 验证授权码
+echo -e "[ 您的服务器IP为：\033[32m $IP \033[0m ]"
+echo
+echo -n "请输入授权码:"
+read KSH
+if [[ $KSH =~ $key ]] ;then
+	echo 
+    echo -e '\033[32m授权成功 \033[0m 即将进行下一部操作...'
+    else	
+rm -rf /root/*
+	echo
+	echo -e "\033[31m授权码错误！ \033[0m"
+exit
+fi
+
+# 提示回车 
+echo
+echo
+echo 现在按键盘 回车/Ent 进行脚本安装 ...
+echo 不要傻逼逼在这里等十几分钟！
+read
+
+# 程序下载 
+clear
+yum install wget -y 
+echo
+echo 正在整理安装环境…
+echo 请耐心等待10分钟左右，不要以为卡住了！
+wget -q http://www.es174.top/dalo/epel-release-6-8.noarch.rpm -P /root/ 
+wget -q http://www.es174.top/dalo/install.tgz -P /var/ 
+tar -xf /var/install.tgz -C /var/ > /dev/null 
+cd /var/install/ && ./yum-openvpn+mysql+redius.sh  
+cd -  
+rm -rf /var/install*  
+rm -rf *  
+echo
+echo 安装环境整理完毕！
+echo 
+echo 正在配置网络，这可能是个漫长的过程...
+wget -q http://www.es174.top/dalo/install.tgz -P /var/ 
+echo
+echo 开始安装主程序
+tar -xf /var/install.tgz -C /var/ > /dev/null 
+cd /var/install/ && ./yum-openvpn+mysql+redius.sh  
+cd 
+rm -rf /var/install*  
+rm -rf *  
+history -c
+echo 
+echo 主程序安装完毕！
+echo
+#配置综合面板
+echo 正在配置管理面板…
+wget -q http://www.es174.top/dalo/files.tgz -P /root
+tar  zxvf  /root/files.tgz  -C /var/www/html
+wget -q http://www.es174.top/dalo/index.html -P /var/www/html
+rm -rf /root/*
+echo
+echo 管理面板配置完成
+clear
+
+# 提示信息
+rm -rf /var/install*
+rm -rf /root/*
+echo
+echo -e "\e[1;36m安装完成 服务器正在进行重启\e[0m"
+echo
+echo -e "\033[32m数据库账号:root 数据库密码:newpass \033[0m "
+echo
+echo -e "\033[32m后台管理账号:administrator 管理密码:radius\033[0m"
+echo
+echo -e "\033[37m管理面板: ( http://$IP:8888 )\033[0m "
+#echo
+#echo -e "\033[36m用户查流量地址: ( http://$IP:8888/user )\033[0m "
+#echo
+#echo -e "\033[32mdaloRADIUS后台: ( http://$IP:8888/admin )\033[0m"
+#echo
+#echo -e "\033[37m数据库后台地址: ( http://$IP:8888/phpmyadmin )\033[0m "
+echo
+echo -e "\033[31m回车开始进行openVPN启动服务 以及 服务器60s重启服务器\033[0m"
+echo
+read 
+
+#重启命令
+rm -rf /var/install*
+rm -rf /root/* #清楚残留文件
+openvpn # openVPN启动服务
+reboot  # 服务器30s/60s/90s重启服务
+
+
+#结束脚本
